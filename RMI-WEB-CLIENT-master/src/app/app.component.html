@@ -1,0 +1,37 @@
+<div class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Smoke Detector</h2>
+      </div>
+      <div class="col-md-12">
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
+        <table *ngIf="!isLoading" class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="th-center">SENSOR STATUS</th>
+              <th scope="col">LOCATION</th>
+              <th scope="col" class="th-center">SMOKE LEVEL</th>
+              <th scope="col" class="th-center">CO2 LEVEL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sensor of sensors">
+              <td *ngIf="sensor.status === 'ACTIVE'" class="td-center green"><span>{{ sensor.status }}</span></td>
+              <td *ngIf="sensor.status === 'INACTIVE'" class="td-center red"><span>{{ sensor.status }}</span></td>
+              <td>
+                <p>Floor No: <span> {{ sensor.floorNo }}</span></p>
+                <p>Room No: <span> {{ sensor.roomNo }}</span></p>
+              </td>
+              <td *ngIf="sensor.smokeLevel <= 5" class="td-center green"><span>{{ sensor.smokeLevel }}</span></td>
+              <td *ngIf="sensor.smokeLevel > 5" class="td-center red"><span>{{ sensor.smokeLevel }}</span></td>
+
+              <td *ngIf="sensor.CO2Level <= 5" class="td-center green"><span>{{ sensor.CO2Level }}</span></td>
+              <td *ngIf="sensor.CO2Level > 5" class="td-center red"><span>{{ sensor.CO2Level }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

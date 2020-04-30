@@ -1,0 +1,62 @@
+.section {
+    background-color: #43D3A7;
+    padding: 3% 0;
+}
+
+.container {
+    background: #fff;
+    padding: 2% 0;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+h2 {
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 0 0 20px 40px;
+}
+
+.table thead th,
+.table td, .table th {
+    border: none;
+}
+
+.table thead th {
+    background-color: #d2dbe2;;
+}
+
+tr td p {
+    margin: 0;
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 25px;
+}
+
+tr td p span {
+    font-weight: 400;
+}
+
+.th-center,
+.td-center {
+    text-align: center;
+}
+
+.green span {
+    padding: 5px 10px;
+    background-color: #ECFCF9;
+    color: #48D1B6;
+    font-weight: 600;
+}
+
+.red span {
+    padding: 5px 10px;
+    background-color: #f7d3d3;
+    color: #d80200;
+    font-weight: 600;
+}
+
+mat-spinner {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+}
