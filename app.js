@@ -14,8 +14,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-sensors.allSensors(); // read all the sensors when the app gets run
-
 /**
  * The initial plan was to run a cron job
  * but since the cron job only allows a minimum time of 1 minute
@@ -24,7 +22,11 @@ sensors.allSensors(); // read all the sensors when the app gets run
  */
 function myLoop() {         //  create a loop function
   setTimeout(function() {   //  call a 3s setTimeout when the loop is called
-    sensors.updateSensors(); // update method
+    sensors.allSensors().then(data => {
+      if (data) {
+        sensors.updateSensors(); // update method
+      }
+    }) // read all the sensors when the app gets run
     myLoop();             //  ..  again which will trigger another
   }, 3000)
 }

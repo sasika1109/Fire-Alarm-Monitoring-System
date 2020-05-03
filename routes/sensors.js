@@ -2,13 +2,16 @@ let request = require('request');
 let allSensors = [];
 require("dotenv").config();
 
-module.exports.allSensors = () => { // this method gets all sensors from the sensors rest api
+module.exports.allSensors = () => new Promise((resolve, reject) => { // this method gets all sensors from the sensors rest api
   request(process.env.URL + 'sensors/', function (error, response, body) { // http get request with request package
     if (!error && response.statusCode == 200) { // if the response is true
       allSensors = (JSON.parse(body)).sensors; // get all the sensor details
+      resolve(true);
+    } else {
+      resolve(false);
     }
   })
-}
+});
 
 module.exports.updateSensors = () => {
   const sensor = allSensors[Math.floor((Math.random() * allSensors.length))]; // select a random sensor using Math.random method
