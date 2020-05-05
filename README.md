@@ -1,2 +1,28 @@
-# Fire-Alarm-Monitoring-System
-Fire-Alarm-Monitoring-System using RMI Sever
+# FIRE ALARM MONITORING SYSTEM
+This repository consists of five separate projects.
+1. RMI Server
+2. Desktop Client
+3. Sensor App
+4. RESTful API
+5. Web Client
+
+Please follow these instructions exactly the same order in order to run the applications.
+-------------------
+
+This projects contains of 5 applications.
+
+1. **RESTful API :**
+In order to run the API on your local machine, please downlaod the RESTful folder which resides in the GitRepo. Once you have downloaded it, navigate go inside the API folder  and run the command `npm install`. This will run and install required npm packages. Once the installation is completed, run the command `npm start` to start the API. This is going to be run on port :3000.
+
+2. **Web Client :**
+In order to run the Web Client on your local machine, please downlaod the Web Client folder which resides in the GitRepo. Once you have downloaded it, navigate go inside the Web Client folder  and run the command `npm install`. This will run and install required npm packages. Once the installtion is completed, run the command `ng serve` to start the Web Client. This is going to be run on port :4200.
+
+3. **RMI Server :**
+In order to run the RMI Server on your local machine, please download the RMI Server folder which resides in the GitRepo. Once you have downloaded it, open up terminal or command prompt and navigate to this folder and run `start rmiregisty` start the registry. Once you have started the registry, open NetBeans and import RMI Server folder. After importing the project, please rum RMIServer.java file. If the server has been started successfully, you will see a message in the termial  which says 'Server started...'.  Please note that this server requires java-json.jar library and it has been included in the project folder. Please download it from the provided GitRepo and configure it using project properties.
+
+4. **Desktop Client :**
+In order to run the RMI Server on your local machine, please download the RMI Server folder which resides in the GitRepo. Once you have downloaded it, import it within the same workplace as RMI Server. Then right click on the project main folder (DesktopClient) and click on Properties. Select Libraries -> Add Poject -> Select RMI (RMI Server folder) and click on Add Project/Jar Files Button. Then, run Login.java and this will start the Desktop Client. You will require to enter the admin credentials, please use the following: **ID:** john@gmamil.com **PW:** john1234
+
+5. **Sensor App :** **(Before you run this particular application, you must ensure that the API, Web Client, RMI Server and the Desktop Client are running).** In order to run the API on your local machine, please downlaod the RESTful folder which resides in the GitRepo. Once you have downloaded it, navigate go inside the API folder 
+and run the command `npm install`. This will run and install required npm packages. Once the installation is completed, run the command `npm start` to start the API.
+This is going to be run on port :3001.
