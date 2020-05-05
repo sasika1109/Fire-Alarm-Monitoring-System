@@ -23,10 +23,6 @@ In order to run the RMI Server on your local machine, please download the RMI Se
 4. Desktop Client
 In order to run the RMI Server on your local machine, please download the RMI Server folder which resides in the GitRepo. Once you have downloaded it, import it within the same workplace as RMI Server. Then right click on the project main folder (DesktopClient) and click on Properties. Select Libraries -> Add Poject -> Select RMI (RMI Server folder) and click on Add Project/Jar Files Button. Then, run Login.java and this will start the Desktop Client. You will require to enter the admin credentials, please use the following: **ID:** john@gmamil.com **PW:** john1234
 
-5. Sensor App
-
-**Before you run this particular application, you must ensure that the API, Web Client, RMI Server and the Desktop Client are running.**
-
-In order to run the API on your local machine, please downlaod the RESTful folder which resides in the GitRepo. Once you have downloaded it, navigate go inside the API folder 
+5. Sensor App **(Before you run this particular application, you must ensure that the API, Web Client, RMI Server and the Desktop Client are running).** In order to run the API on your local machine, please downlaod the RESTful folder which resides in the GitRepo. Once you have downloaded it, navigate go inside the API folder 
 and run the command `npm install`. This will run and install required npm packages. Once the installation is completed, run the command `npm start` to start the API.
 This is going to be run on port :3001.
