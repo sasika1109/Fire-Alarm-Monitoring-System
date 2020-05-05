@@ -2,41 +2,43 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.SecurityManager;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.JSONObject;
 
 public class RMIServer extends UnicastRemoteObject implements RMIService {
 
 	private static int count = 0;
+        private final String API_URL = "http://localhost:3000/api/"; // API URL which is reusable in every http call
 
 	public RMIServer() throws RemoteException {
 		super();
 	}
         
         // login user
+        @Override
 	public boolean getLogin(String username, String password) throws IOException, InterruptedException, RemoteException {
-		//URL urlForGetRequest = new URL("http://localhost:3000/api/auth/");
-		final String SENSOR_ID = "5ea0a01f8d913858f6490d7a";
-		final String SENSOR_PARAMS = "{\n\r" + "\"email\": \"" + username + "\",\r\n" + "    \"password\":\"" +  password + "\"\n}";
+            // Create JSON body for the login POST request
+		final String SENSOR_PARAMS = "{\n\r"
+                        + "\"email\": \""
+                        + username + "\",\r\n"
+                        + "    \"password\":\""
+                        +  password
+                        + "\"\n}";
                 System.out.println(SENSOR_PARAMS);
 		
-		URL obj = new URL("http://localhost:3000/api/auth/");
+                // Create URL
+		URL obj = new URL(this.API_URL + "auth/");
 		
+                // Open a new connection with data and the url
 		HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/json");
@@ -53,7 +55,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 		System.out.println("POST Response Code :  " + responseCode);
 		System.out.println("POST Response Message : " + connection.getResponseMessage());
 
-		if (responseCode == HttpURLConnection.HTTP_OK) {
+		if (responseCode == HttpURLConnection.HTTP_OK) { // check if the connection is done properly ( status === 200)
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
@@ -62,9 +64,9 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 			}
 			in.close();
                         try {
-                            JSONObject sensors = new JSONObject(response.toString());
+                            JSONObject sensors = new JSONObject(response.toString()); // get response as a JSON object
                         System.out.println(sensors.getString("message"));
-                        if (sensors.getString("message").equals("unauthorized")) {
+                        if (sensors.getString("message").equals("unauthorized")) { // check if the message is unauthorized
                             return false;
                         } else {
                             return true;
@@ -74,7 +76,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
                             return false;
                         }
 		} else {
-			System.out.println("POST NOT WORKED");
+			System.out.println("POST NOT WORKED"); // IF connection fails
 			return false;
 		}
 	}
@@ -82,7 +84,9 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 
 	// get sensor details
 	public String getSensorDetails() throws IOException, InterruptedException, RemoteException,JSONException {
-		URL urlForGetRequest = new URL("http://localhost:3000/api/sensors/");
+                // create url for http call
+		URL urlForGetRequest = new URL(this.API_URL + "sensors/");
+                // Open get request connection
 		HttpURLConnection conection = (HttpURLConnection) urlForGetRequest.openConnection();
 		conection.setRequestMethod("GET");
 		int responseCode = conection.getResponseCode();
@@ -114,10 +118,12 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 	}
         
         // check SMOKE LEVEL and CO2 Level
-        public boolean checkSensorStatus(JSONObject sensor) throws JSONException{
+        // this method will create http request to the backend API
+        public boolean checkSensorStatus(JSONObject sensor) throws JSONException, IOException{
             if(sensor.getInt("smokeLevel") > 5 || sensor.getInt("CO2Level") > 5) {
-                sendEmail(sensor.getInt("floorNo"), sensor.getInt("roomNo"));
-                sendSMS(sensor.getInt("floorNo"), sensor.getInt("roomNo"));
+                // This method is utilized to send api request to either send mails or sms
+                sendAlert(sensor.getInt("floorNo"), sensor.getInt("roomNo"), "email"); // Use send alert method to send an email
+                sendAlert(sensor.getInt("floorNo"), sensor.getInt("roomNo"), "text"); // Use send alert method to send text
                 
                 return true;
             } else {
@@ -126,13 +132,42 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
         }
         
         // send email
-        public void sendEmail(int FloorNo, int RoomNo) {
-            System.out.println("EMAIL ALERT : SMOKE ALERT in FLOOR NO : " + FloorNo + " ROOM NO : " + RoomNo);
-        }
-        
-        // send SMS
-        public void sendSMS(int FloorNo, int RoomNo) {
-            System.out.println("SMS ALERT : SMOKE ALERT in FLOOR NO : " + FloorNo + " ROOM NO : " + RoomNo);
+        public void sendAlert(int FloorNo, int RoomNo, String service) throws MalformedURLException, IOException, JSONException {
+            final String SENSOR_PARAMS = "{\n"
+                    + "\"floor\": "
+                    + FloorNo + ",\r\n"
+                    + " \"room\": "
+                    + RoomNo + "\n}";
+            
+            URL obj = new URL(this.API_URL + "messages/" + service); // send API call according to the method call
+		
+		HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
+		postConnection.setRequestMethod("POST");
+		postConnection.setRequestProperty("Content-Type", "application/json");
+		postConnection.setDoOutput(true);
+		
+		OutputStream os = postConnection.getOutputStream();
+		os.write(SENSOR_PARAMS.getBytes());
+		os.flush();
+		os.close();
+		
+		int responseCode = postConnection.getResponseCode();
+                
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(postConnection.getInputStream()));
+			StringBuffer response = new StringBuffer();
+			String readLine;
+			while ((readLine = in.readLine()) != null) {
+				response.append(readLine);
+			}
+			in.close();
+                        JSONObject result = new JSONObject(response.toString()); // get the response as JSON object
+                        if((boolean)result.get("status") == true) { // check if the status is true
+                         System.out.println("Response: " + result.getString("message"));
+                        }
+		} else {
+			System.out.println("POST method FAILED");
+		}
         }
 	
 	// get single sensor details
@@ -140,7 +175,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 		
 		final String SENSOR_ID = "5ea0a01f8d913858f6490d7a";
 		
-		URL obj = new URL("http://localhost:3000/api/sensors/5ea0a01f8d913858f6490d7a");
+		URL obj = new URL(this.API_URL + "sensors/5ea0a01f8d913858f6490d7a");
 		
 		HttpURLConnection conection = (HttpURLConnection) obj.openConnection();
 		conection.setRequestMethod("GET");
@@ -167,7 +202,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 		final String SENSOR_PARAMS = "{\n" + "\"floorNo\": " + FloorNo + ",\r\n" + " \"roomNo\": " + RoomNo + ",\r\n" + " \"status\": \"" + Status + "\"\n}";
 		System.out.println(SENSOR_PARAMS);
 		
-		URL obj = new URL("http://localhost:3000/api/sensors/");
+		URL obj = new URL(this.API_URL + "sensors/");
 		
 		HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
 		postConnection.setRequestMethod("POST");
@@ -207,7 +242,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 		final String SENSOR_ID = ID;
 		final String SENSOR_PARAMS = "{\n" + "\"floorNo\": " + FloorNo + ",\r\n" + " \"roomNo\": " + RoomNo + ",\r\n" + " \"status\": \"" + Status + "\"\n}";
                 
-		URL obj = new URL("http://localhost:3000/api/sensors/"+SENSOR_ID);
+		URL obj = new URL(this.API_URL + "sensors/"+SENSOR_ID);
 		
 		HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
 		connection.setRequestMethod("PUT");
