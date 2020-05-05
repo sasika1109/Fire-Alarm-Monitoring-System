@@ -27,9 +27,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JTableRow extends javax.swing.JFrame{   
+public class sensorTable extends javax.swing.JFrame{   
     
-     public JTableRow() {
+     public sensorTable() {
 //        initComponents();
     }
      
@@ -44,30 +44,34 @@ public class JTableRow extends javax.swing.JFrame{
         System.setProperty("java.security.policy", "file:allowall.policy");
         
         RMIService service = null;
-        try {
+          try {
+            // RMI service reqeust/response end point
             service = (RMIService) Naming.lookup("//localhost/rmiservice");
-            
-            System.out.println(service.getSensorDetails());
-            
+
+            // assign all sensor JSON strings to JSONArray
             JSONArray sensors = new JSONArray(service.getSensorDetails());
-            
+
+            // define list of ArraList with a type of Sensor
             ArrayList<Sensor> list = new ArrayList<Sensor>();
-            for(int i = 0; i < sensors.length(); i++) {
+
+            // put all sensor objects into list array
+            for (int i = 0; i < sensors.length(); i++) {
                 JSONObject sensor = sensors.getJSONObject(i);
                 String _id = sensor.getString("_id");
                 String status = sensor.getString("status");
                 int floorNo = sensor.getInt("floorNo");
                 int roomNo = sensor.getInt("roomNo");
-                int smokeLevel =  sensor.getInt("smokeLevel");
+                int smokeLevel = sensor.getInt("smokeLevel");
                 int CO2Level = sensor.getInt("CO2Level");
-                
+
                 Sensor s = new Sensor(_id, status, floorNo, roomNo, smokeLevel, CO2Level);
                 list.add(s);
             }
-            mainList = list;   
-            
+            // mainList = list;
+
+            // show add sensor details to jFrame table row
             Object rowData[] = new Object[6];
-            for(int i = 0; i < list.size(); i++){ 
+            for (int i = 0; i < list.size(); i++) {
                 rowData[0] = list.get(i).status;
                 rowData[1] = list.get(i).floorNo;
                 rowData[2] = list.get(i).roomNo;
@@ -75,21 +79,28 @@ public class JTableRow extends javax.swing.JFrame{
                 rowData[4] = list.get(i).co2Level;
                 rowData[5] = list.get(i)._id;
                 model.addRow(rowData);
-                if(list.get(i).co2Level >= 5 || list.get(i).smokeLevel >= 5){
-                    int count = 0;
-                     if(list.get(i).co2Level >= 5 && list.get(i).smokeLevel >= 5 && count <= 1){
-                     JOptionPane.showMessageDialog(null, "Floor no "+ list.get(i).floorNo + " Room No "+ list.get(i).roomNo + " Co2 Level & Smoke level are  High" );
-                     count++;
-                    }
-                     else if(list.get(i).co2Level >= 5 && count <= 1){
-                     JOptionPane.showMessageDialog(null, "Floor no "+ list.get(i).floorNo + " Room No "+ list.get(i).roomNo + " Co2 Level is High" );
-                      count++;
-                    }else if(list.get(i).smokeLevel >= 5 && count <= 1){
-                        JOptionPane.showMessageDialog(null, "Floor no "+ list.get(i).floorNo + " Room No "+ list.get(i).roomNo + " Smoke Level is High" );
-                         count++;
+
+                // if sensor status is ACTIVE
+                if (list.get(i).status.equals("ACTIVE")) {
+                    // check for CO2 level and SMOKE level and show alert if true
+                    if (list.get(i).co2Level >= 5 || list.get(i).smokeLevel >= 5) {
+                        int count = 0;
+                        if (list.get(i).co2Level >= 5 && list.get(i).smokeLevel >= 5 && count <= 1) {
+                            JOptionPane.showMessageDialog(null, "Floor no " + list.get(i).floorNo + " Room No "
+                                    + list.get(i).roomNo + " Co2 Level & Smoke level are  High");
+                            count++;
+                        } else if (list.get(i).co2Level >= 5 && count <= 1) {
+                            JOptionPane.showMessageDialog(null, "Floor no " + list.get(i).floorNo + " Room No "
+                                    + list.get(i).roomNo + " Co2 Level is High");
+                            count++;
+                        } else if (list.get(i).smokeLevel >= 5 && count <= 1) {
+                            JOptionPane.showMessageDialog(null, "Floor no " + list.get(i).floorNo + " Room No "
+                                    + list.get(i).roomNo + " Smoke Level is High");
+                            count++;
+                        }
                     }
                 }
-            } 
+            }
         } catch (NotBoundException ex) {
             System.err.println(ex.getMessage());
         } catch (MalformedURLException ex) {
@@ -100,7 +111,7 @@ public class JTableRow extends javax.swing.JFrame{
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, JSONException{
-        System.out.println("*****Inside main method*****");
+       
         // create JFrame and JTable
         JFrame frame = new JFrame();
         JTable table = new JTable(); 
@@ -188,7 +199,7 @@ public class JTableRow extends javax.swing.JFrame{
                 } catch (InterruptedException ex) {
                   //  Logger.getLogger(AddSensorForm.class.getName()).log(Level.SEVERE, null, ex); 
                 } catch (JSONException ex) {
-                    Logger.getLogger(JTableRow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(sensorTable.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
  
@@ -233,13 +244,13 @@ public class JTableRow extends javax.swing.JFrame{
                 } catch (InterruptedException ex) {
                   //  Logger.getLogger(AddSensorForm.class.getName()).log(Level.SEVERE, null, ex); 
                 } catch (JSONException ex) {
-                    Logger.getLogger(JTableRow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(sensorTable.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
          java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JTableRow().setVisible(true);
+                new sensorTable().setVisible(true);
             }
         });
         
@@ -250,6 +261,7 @@ public class JTableRow extends javax.swing.JFrame{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         
+         // add timer to request data withing a time limit (every 15 seconds)
         TimerTask task = new TimerTask() {
                    
             @Override
@@ -258,17 +270,17 @@ public class JTableRow extends javax.swing.JFrame{
                     model.setRowCount(0);
                     getSensorDetailsFromRMI();
                 } catch (IOException ex) {
-                    Logger.getLogger(JTableRow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(sensorTable.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(JTableRow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(sensorTable.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (JSONException ex) {
-                    Logger.getLogger(JTableRow.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(sensorTable.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         };
         
         Timer timer = new Timer("Timer");
-        long delay = 30000L;
+        long delay = 15000L;
         timer.schedule(task, 0, delay);
     }
 }

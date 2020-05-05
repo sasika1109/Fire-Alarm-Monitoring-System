@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 // require routes
 const sensorRoute = require('./routes/sensorRoute');
 const authRoute = require('./routes/authRoute');
+const notification = require('./routes/notification');
 
 // defining api URL
 const apiURL = '/api/';
@@ -28,5 +29,6 @@ app.use((req, res, next) => {
 // combining api URL with the route to work
 app.use(apiURL + 'sensors/', sensorRoute);
 app.use(apiURL + 'auth/', authRoute);
+app.use(apiURL + 'messages', notification);
 
 module.exports = app;

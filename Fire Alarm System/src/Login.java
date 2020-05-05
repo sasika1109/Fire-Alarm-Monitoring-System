@@ -148,41 +148,45 @@ public class Login extends javax.swing.JFrame {
 //            JOptionPane.showMessageDialog(this, "Login Failed");
 //        }
         
-         String username = tname.getText();
+            String username = tname.getText();
             String password = tPass.getText();
             
             System.setProperty("java.security.policy", "file:allowall.policy");
             RMIService service = null;
             
             try {
+                // create service end point
                 service = (RMIService) Naming.lookup("//localhost/rmiservice");
+                
+                // get user name and password from the form
+                // if it returns true, execute the following
                 if (service.getLogin(username, password)) {
                     String[] arguments = new String[] {"123"};
-            try {
-                JTableRow.main(arguments);
-                 this.dispose();
-            } catch (IOException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JSONException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                try {
+                    sensorTable.main(arguments);
+                    this.dispose();
+                } catch (IOException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JSONException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 } else {
                     JOptionPane.showMessageDialog(this, "Login Failed");
                 }
                 
             } catch (NotBoundException ex) {
-            System.err.println(ex.getMessage());
-        } catch (MalformedURLException ex) {
-            System.err.println(ex.getMessage());
-        } catch (RemoteException ex) {
-            System.err.println(ex.getMessage());
-        } catch (InterruptedException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
+                System.err.println(ex.getMessage());
+            } catch (MalformedURLException ex) {
+                System.err.println(ex.getMessage());
+            } catch (RemoteException ex) {
+             System.err.println(ex.getMessage());
+            } catch (InterruptedException ex) {
+                System.err.println(ex.getMessage());
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
       
     }//GEN-LAST:event_jButton1ActionPerformed
 
