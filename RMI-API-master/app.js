@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 // require routes
 const sensorRoute = require('./routes/sensorRoute');
 const authRoute = require('./routes/authRoute');
-const notification = require('./routes/notification');
+const notification = require('./routes/notificationRoute');
 
 // defining api URL
 const apiURL = '/api/';

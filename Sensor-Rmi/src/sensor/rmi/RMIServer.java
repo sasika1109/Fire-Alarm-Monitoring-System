@@ -30,7 +30,6 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 		// Create JSON body for the login POST request
 		final String SENSOR_PARAMS = "{\n\r" + "\"email\": \"" + username + "\",\r\n" + "    \"password\":\"" + password
 				+ "\"\n}";
-		System.out.println(SENSOR_PARAMS);
 
 		// generate API request URL
 		URL obj = new URL(this.API_URL + "auth/");
@@ -49,8 +48,8 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
                 // get resonse code
 		int responseCode = connection.getResponseCode();
 
-		System.out.println("POST Response Code :  " + responseCode);
-		System.out.println("POST Response Message : " + connection.getResponseMessage());
+//		System.out.println("POST Response Code :  " + responseCode);
+//		System.out.println("POST Response Message : " + connection.getResponseMessage());
 
 		if (responseCode == HttpURLConnection.HTTP_OK) { // check if the connection is done properly ( status === 200)
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -62,7 +61,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 			in.close();
 			try {
 				JSONObject sensors = new JSONObject(response.toString()); // get response as a JSON object
-				System.out.println(sensors.getString("message"));
+				
 				if (sensors.getString("message").equals("unauthorized")) { // check if the message is unauthorized
 					return false;
 				} else {
@@ -230,7 +229,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIService {
 				response.append(inputLine);
 			}
 			in.close();
-			System.out.println(response.toString());
+			//System.out.println(response.toString());
 			return response.toString();
 		} else {
 			System.out.println("POST NOT WORKED");
