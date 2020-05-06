@@ -28,7 +28,7 @@ function myLoop() {         //  create a loop function
       }
     }) // read all the sensors when the app gets run
     myLoop();             //  ..  again which will trigger another
-  }, 4000)
+  }, 10000)
 }
 myLoop();
 
